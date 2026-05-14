@@ -141,17 +141,20 @@ class CampaignService {
   async list(
     page: number = 1,
     limit: number = 20,
+    status?: "ACTIVE" | "COMPLETED",
   ): Promise<CampaignListResponse> {
     const safeLimit = Math.min(limit, 100);
     const skip = (page - 1) * safeLimit;
+    const where = status ? { status } : {};
 
     const [campaigns, total] = await prisma.$transaction([
       prisma.campaign.findMany({
+        where,
         orderBy: { createdAt: "desc" },
         skip,
         take: safeLimit,
       }),
-      prisma.campaign.count(),
+      prisma.campaign.count({ where }),
     ]);
 
     return {
@@ -186,13 +189,15 @@ class CampaignService {
   ): Promise<CampaignCursorListResponse> {
     const safeLimit = Math.min(limit, 50);
 
+    // Only show ACTIVE campaigns to users
     const campaigns = await prisma.campaign.findMany({
+      where: { status: "ACTIVE" },
       orderBy: { createdAt: "desc" },
-      take: safeLimit + 1, // Fetch one extra to check if there are more
+      take: safeLimit + 1,
       ...(cursor
         ? {
             cursor: { id: cursor },
-            skip: 1, // Skip the cursor item itself
+            skip: 1,
           }
         : {}),
     });
@@ -224,6 +229,7 @@ class CampaignService {
     maxSubmissionsPerAccount: number;
     feePerCreator: number;
     maxEarningPerPostPerCreator: number;
+    status: string;
     createdAt: Date;
     updatedAt: Date;
   }): CampaignResponse {

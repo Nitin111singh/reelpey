@@ -7,6 +7,7 @@ export interface ConnectedAccount {
   isVerified: boolean;
   verifiedAt: string | null;
   createdAt: string;
+  manualVerificationStatus: "NONE" | "PENDING" | "APPROVED" | "REJECTED";
 }
 
 export interface CampaignItem {
@@ -26,6 +27,9 @@ export interface CampaignItem {
 export interface SubmissionItem {
   id: string;
   videoLink: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  views: number;
+  earnings: number;
   createdAt: string;
   campaign: {
     id: string;

@@ -25,6 +25,8 @@ export const deleteAccountSchema = z.object({
 
 // ── Response Types ─────────────────────────────────────────
 
+export type ManualVerificationStatus = "NONE" | "PENDING" | "APPROVED" | "REJECTED";
+
 export interface ConnectedAccountResponse {
   id: string;
   username: string;
@@ -32,6 +34,7 @@ export interface ConnectedAccountResponse {
   isVerified: boolean;
   verifiedAt: string | null;
   createdAt: string;
+  manualVerificationStatus: ManualVerificationStatus;
 }
 
 export interface InitiateVerificationResponse {
@@ -47,6 +50,24 @@ export interface VerifyAccountResponse {
   message: string;
   account?: ConnectedAccountResponse;
   requiresManualConfirmation?: boolean;
+  pendingAdminReview?: boolean;
+}
+
+export interface AdminVerificationRequest {
+  id: string;
+  username: string;
+  accountUrl: string;
+  verificationCode: string;
+  manualVerificationStatus: ManualVerificationStatus;
+  adminNotes: string | null;
+  reviewedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: string;
+    username: string;
+    email: string;
+  };
 }
 
 // ── Inferred Types ─────────────────────────────────────────

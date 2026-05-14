@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { Film, Megaphone, Users, ClipboardList, LogOut, ShieldCheck } from "lucide-react";
+import { Film, Megaphone, Users, ClipboardList, LogOut, ShieldCheck, Instagram } from "lucide-react";
 import SidebarBtn from "@/components/admin/SidebarBtn";
 import Modal from "@/components/admin/Modal";
 import Link from "next/link";
@@ -29,21 +29,21 @@ export default function AdminDashboardLayout({
 
   const isUsersActive = pathname.startsWith("/admin/dashboard/users");
   const isRequestsActive = pathname.startsWith("/admin/dashboard/campaign-requests");
-  const isCampaignsActive = !isUsersActive && !isRequestsActive;
+  const isIgVerificationsActive = pathname.startsWith("/admin/dashboard/instagram-verifications");
+  const isCampaignsActive = !isUsersActive && !isRequestsActive && !isIgVerificationsActive;
 
   return (
     <div className="flex h-screen bg-[#060510] text-white overflow-hidden">
       {/* ── Sidebar ── */}
-      <aside className="w-[72px] bg-[#0c0a1e] border-r border-white/5 flex flex-col items-center py-6 shrink-0 z-20">
+      <aside className="w-[72px] bg-[#0c0a1e] border-r border-white/5 flex flex-col items-center py-6 shrink-0 z-20 overflow-y-auto">
         {/* Logo */}
-        <div className="mb-10">
+        <div className="mb-8">
           <Link href="/">
             <div className="w-10 h-10 rounded-xl bg-linear-to-br from-violet-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-violet-500/30 cursor-pointer">
               <Film className="w-5 h-5 text-white" />
             </div>
           </Link>
         </div>
-
 
         {/* Nav */}
         <nav className="flex-1 flex flex-col gap-3 w-full items-center">
@@ -65,10 +65,16 @@ export default function AdminDashboardLayout({
             active={isRequestsActive}
             onClick={() => router.push("/admin/dashboard/campaign-requests")}
           />
+          <SidebarBtn
+            icon={Instagram}
+            label="Instagram Verifications"
+            active={isIgVerificationsActive}
+            onClick={() => router.push("/admin/dashboard/instagram-verifications")}
+          />
         </nav>
 
         {/* Bottom row: admin badge + logout */}
-        <div className="flex flex-col gap-3 items-center">
+        <div className="flex flex-col gap-3 items-center pt-4">
           <div
             title="Admin"
             className="px-2 py-1 rounded-md bg-violet-500/10 border border-violet-500/20"
@@ -78,12 +84,12 @@ export default function AdminDashboardLayout({
           <button
             onClick={() => setIsLogoutOpen(true)}
             title="Logout"
-            className="w-10 h-10 flex items-center justify-center rounded-xl text-white/40 hover:text-red-400 hover:bg-white/5 transition-all"
+            className="w-10 h-10 flex items-center justify-center rounded-xl text-white/60 hover:text-red-400 hover:bg-red-500/10 border border-white/10 hover:border-red-500/30 transition-all"
           >
             <LogOut className="w-5 h-5" />
           </button>
         </div>
-      </aside >
+      </aside>
 
       {/* ── Main content (child routes) ── */}
       < main className="flex-1 overflow-y-auto" > {children}</main >

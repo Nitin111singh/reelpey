@@ -8,10 +8,31 @@ import {
   ExternalLink,
   Loader2,
   Calendar,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Eye,
+  DollarSign,
 } from "lucide-react";
 import type { SubmissionItem } from "@/components/dashboard/types";
 
 const LIMIT = 10;
+
+const STATUS_UI = {
+  PENDING:  { label: "Pending",  icon: Clock,        cls: "bg-amber-500/15 text-amber-400 border border-amber-500/25" },
+  APPROVED: { label: "Approved", icon: CheckCircle2, cls: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25" },
+  REJECTED: { label: "Rejected", icon: XCircle,      cls: "bg-red-500/15 text-red-400 border border-red-500/25" },
+} as const;
+
+function StatusBadge({ status }: { status: "PENDING" | "APPROVED" | "REJECTED" }) {
+  const { label, icon: Icon, cls } = STATUS_UI[status];
+  return (
+    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold ${cls}`}>
+      <Icon className="w-3 h-3" />
+      {label}
+    </span>
+  );
+}
 
 export default function SubmissionsView() {
   const router = useRouter();
@@ -81,9 +102,10 @@ export default function SubmissionsView() {
                     <th className="px-5 py-3.5 font-medium">Campaign</th>
                     <th className="px-5 py-3.5 font-medium">Platforms</th>
                     <th className="px-5 py-3.5 font-medium">Video Link</th>
-                    <th className="px-5 py-3.5 font-medium text-right">
-                      Submitted
-                    </th>
+                    <th className="px-5 py-3.5 font-medium text-center">Status</th>
+                    <th className="px-5 py-3.5 font-medium text-right">Views</th>
+                    <th className="px-5 py-3.5 font-medium text-right">Earnings</th>
+                    <th className="px-5 py-3.5 font-medium text-right">Submitted</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
@@ -162,6 +184,27 @@ export default function SubmissionsView() {
                         </a>
                       </td>
 
+                      {/* Status */}
+                      <td className="px-5 py-4 text-center">
+                        <StatusBadge status={s.status} />
+                      </td>
+
+                      {/* Views */}
+                      <td className="px-5 py-4 text-right">
+                        <div className="flex items-center justify-end gap-1 text-cyan-400 font-semibold text-sm">
+                          <Eye className="w-3.5 h-3.5" />
+                          {(s.views ?? 0).toLocaleString()}
+                        </div>
+                      </td>
+
+                      {/* Earnings */}
+                      <td className="px-5 py-4 text-right">
+                        <div className="flex items-center justify-end gap-1 text-emerald-400 font-semibold text-sm">
+                          <DollarSign className="w-3.5 h-3.5" />
+                          {(s.earnings ?? 0).toLocaleString()}
+                        </div>
+                      </td>
+
                       {/* Date */}
                       <td className="px-5 py-4 text-right">
                         <div className="flex items-center gap-1.5 justify-end text-white/30 text-xs">
@@ -233,6 +276,23 @@ export default function SubmissionsView() {
                       +{s.campaign.supportedPlatforms.length - 3}
                     </span>
                   )}
+                </div>
+
+                {/* Status */}
+                <div className="pl-8">
+                  <StatusBadge status={s.status} />
+                </div>
+
+                {/* Views + Earnings */}
+                <div className="flex items-center gap-4 pl-8">
+                  <div className="flex items-center gap-1 text-cyan-400 text-xs font-semibold">
+                    <Eye className="w-3 h-3" />
+                    {(s.views ?? 0).toLocaleString()} views
+                  </div>
+                  <div className="flex items-center gap-1 text-emerald-400 text-xs font-semibold">
+                    <DollarSign className="w-3 h-3" />
+                    ${(s.earnings ?? 0).toLocaleString()} earned
+                  </div>
                 </div>
 
                 {/* Video link + date */}

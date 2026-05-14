@@ -75,11 +75,11 @@ export default function Campaigns() {
           ))}
         </div>
 
-        {/* Budget summary */}
+        {/* Views summary */}
         <div className="text-center mb-8">
           <p className="text-sm font-medium text-white/40">
-            <span className="text-cosmic-cyan font-bold text-base">$234,320+</span>{" "}
-            available from {campaignData[activeTab].length} campaigns
+            <span className="text-cosmic-cyan font-bold text-base">5 Billion+</span>{" "}
+            organic targeted views generated till now for brands
           </p>
         </div>
 

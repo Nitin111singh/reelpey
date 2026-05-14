@@ -8,7 +8,7 @@ import { rateLimit } from "@/lib/rate-limit";
 
 /**
  * POST /api/instagram/manual-verify
- * Manually verify Instagram account (user confirms they added code to bio).
+ * Submit account for admin manual review when auto-verify fails.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       return errorResponse("Validation failed", 422, errors as Record<string, string[]>);
     }
 
-    const result = await instagramService.manualVerify(
+    const result = await instagramService.requestManualVerification(
       userId,
       parsed.data.accountId
     );

@@ -25,17 +25,16 @@ export class MailtrapEmailService implements IEmailService {
 
   async sendEmail(to: string, subject: string, html: string): Promise<void> {
     try {
-      const info = this.transporter.sendMail({
+      const info = await this.transporter.sendMail({
         from: this.from,
         to: [to],
         subject,
         html,
       });
 
-      console.log(` Email sent to: ${to}`);
-      console.log(` Response:`, info);
+      console.log(`Email sent to: ${to}`, info);
     } catch (error) {
-      console.error(" Failed to send email:", error);
+      console.error("Failed to send email:", error);
       throw error;
     }
   }

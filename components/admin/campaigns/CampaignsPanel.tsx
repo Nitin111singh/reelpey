@@ -17,38 +17,27 @@ import CampaignFormModal from "@/components/admin/campaigns/CampaignFormModal";
 import type { Campaign } from "@/components/admin/types";
 
 const LIMIT = 9;
+type StatusTab = "ACTIVE" | "COMPLETED";
 
-/**
- * Admin campaigns panel.
- *
- * Features:
- *  - Paginated grid of campaigns
- *  - Create / Edit / Delete via modals
- *  - View per-campaign submissions
- *  - Toast feedback for async operations
- */
 export default function CampaignsPanel() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [statusTab, setStatusTab] = useState<StatusTab>("ACTIVE");
   const [isLoading, setIsLoading] = useState(true);
 
-  // Modal state
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Campaign | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Campaign | null>(null);
 
-  // Toast
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
   const router = useRouter();
 
-  // ── Data ──────────────────────────────────────────────────────────────────
-
-  const load = useCallback(async (p: number) => {
+  const load = useCallback(async (p: number, status: StatusTab) => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/campaigns?page=${p}&limit=${LIMIT}`);
+      const res = await fetch(`/api/campaigns?page=${p}&limit=${LIMIT}&status=${status}`);
       const data = await res.json();
       if (data.success) {
         setCampaigns(data.data.campaigns);
@@ -60,10 +49,12 @@ export default function CampaignsPanel() {
   }, []);
 
   useEffect(() => {
-    load(page);
-  }, [page, load]);
+    setPage(1);
+  }, [statusTab]);
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
+  useEffect(() => {
+    load(page, statusTab);
+  }, [page, statusTab, load]);
 
   function showToast(msg: string, ok: boolean) {
     setToast({ msg, ok });
@@ -77,7 +68,7 @@ export default function CampaignsPanel() {
       if (data.success) {
         showToast("Campaign deleted.", true);
         setDeleteTarget(null);
-        load(page);
+        load(page, statusTab);
       } else {
         showToast(data.error?.message ?? "Delete failed.", false);
       }
@@ -86,7 +77,27 @@ export default function CampaignsPanel() {
     }
   }
 
-  // ── Render ────────────────────────────────────────────────────────────────
+  async function handleStatusChange(id: string, status: "ACTIVE" | "COMPLETED") {
+    try {
+      const res = await fetch(`/api/campaigns/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(
+          status === "COMPLETED" ? "Campaign marked as completed." : "Campaign reactivated.",
+          true
+        );
+        load(page, statusTab);
+      } else {
+        showToast(data.error?.message ?? "Failed to update status.", false);
+      }
+    } catch {
+      showToast("Network error.", false);
+    }
+  }
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -109,17 +120,13 @@ export default function CampaignsPanel() {
       )}
 
       {/* ── Header ── */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-extrabold text-white tracking-tight">
             Campaigns
-            <span className="ml-3 text-base font-normal text-white/30">
-              ({total})
-            </span>
+            <span className="ml-3 text-base font-normal text-white/30">({total})</span>
           </h1>
-          <p className="mt-1 text-sm text-white/40">
-            Manage all influencer campaigns
-          </p>
+          <p className="mt-1 text-sm text-white/40">Manage all influencer campaigns</p>
         </div>
         <button
           onClick={() => setCreateOpen(true)}
@@ -130,6 +137,25 @@ export default function CampaignsPanel() {
         </button>
       </div>
 
+      {/* ── Active / Completed tabs ── */}
+      <div className="flex items-center gap-1 bg-white/[0.04] border border-white/[0.06] rounded-xl p-1 w-fit mb-6">
+        {(["ACTIVE", "COMPLETED"] as StatusTab[]).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setStatusTab(tab)}
+            className={`px-4 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all ${
+              statusTab === tab
+                ? tab === "ACTIVE"
+                  ? "bg-emerald-600 text-white shadow-sm shadow-emerald-600/30"
+                  : "bg-slate-600 text-white shadow-sm shadow-slate-600/30"
+                : "text-white/45 hover:text-white hover:bg-white/5"
+            }`}
+          >
+            {tab === "ACTIVE" ? "Active" : "Completed"}
+          </button>
+        ))}
+      </div>
+
       {/* ── Grid ── */}
       {isLoading ? (
         <div className="flex items-center justify-center py-32">
@@ -138,15 +164,21 @@ export default function CampaignsPanel() {
       ) : campaigns.length === 0 ? (
         <EmptyState
           icon={Megaphone}
-          title="No campaigns yet"
-          desc="Create your first campaign to get started."
+          title={statusTab === "ACTIVE" ? "No active campaigns" : "No completed campaigns"}
+          desc={
+            statusTab === "ACTIVE"
+              ? "Create your first campaign to get started."
+              : "Campaigns you mark as completed will appear here."
+          }
           action={
-            <button
-              onClick={() => setCreateOpen(true)}
-              className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition-colors"
-            >
-              <Plus className="w-4 h-4" /> New Campaign
-            </button>
+            statusTab === "ACTIVE" ? (
+              <button
+                onClick={() => setCreateOpen(true)}
+                className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition-colors"
+              >
+                <Plus className="w-4 h-4" /> New Campaign
+              </button>
+            ) : undefined
           }
         />
       ) : (
@@ -158,6 +190,7 @@ export default function CampaignsPanel() {
               onEdit={() => setEditTarget(c)}
               onDelete={() => setDeleteTarget(c)}
               onViewSubmissions={() => router.push(`/admin/dashboard/campaigns/${c.id}/submissions`)}
+              onStatusChange={handleStatusChange}
             />
           ))}
         </div>
@@ -173,7 +206,7 @@ export default function CampaignsPanel() {
             showToast("Campaign created!", true);
             setCreateOpen(false);
             setPage(1);
-            load(1);
+            load(1, statusTab);
           }}
           onError={(msg) => showToast(msg, false)}
         />
@@ -187,7 +220,7 @@ export default function CampaignsPanel() {
           onSaved={() => {
             showToast("Campaign updated!", true);
             setEditTarget(null);
-            load(page);
+            load(page, statusTab);
           }}
           onError={(msg) => showToast(msg, false)}
         />
@@ -201,8 +234,7 @@ export default function CampaignsPanel() {
             <span className="text-white font-semibold">{deleteTarget.name}</span>?
           </p>
           <p className="text-xs text-white/30 mb-6">
-            This will also remove all uploaded images. This action cannot be
-            undone.
+            This will also remove all uploaded images. This action cannot be undone.
           </p>
           <div className="flex justify-end gap-3">
             <button
@@ -220,7 +252,6 @@ export default function CampaignsPanel() {
           </div>
         </Modal>
       )}
-
     </div>
   );
 }

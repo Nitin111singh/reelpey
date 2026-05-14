@@ -10,9 +10,10 @@ import {
   AlertCircle,
   CheckCircle,
   ExternalLink,
+  Clock,
 } from "lucide-react";
 
-type Step = "input" | "verify" | "success";
+type Step = "input" | "verify" | "success" | "pending";
 
 interface VerificationData {
   accountId: string;
@@ -136,9 +137,11 @@ export default function AddInstagramModal({
       if (result.data.success) {
         setStep("success");
         onAccountAdded();
+      } else if (result.data.pendingAdminReview) {
+        setStep("pending");
+        onAccountAdded();
       } else {
         setVerifyMessage(result.data.message);
-        // Show manual confirm button if auto-verify can't fetch profile
         if (result.data.requiresManualConfirmation) {
           setShowManualConfirm(true);
         }
@@ -174,6 +177,9 @@ export default function AddInstagramModal({
       if (result.data.success) {
         setStep("success");
         onAccountAdded();
+      } else if (result.data.pendingAdminReview) {
+        setStep("pending");
+        onAccountAdded();
       } else {
         setVerifyMessage(result.data.message);
       }
@@ -200,11 +206,13 @@ export default function AddInstagramModal({
                 {step === "input" && "Connect Instagram"}
                 {step === "verify" && "Verify Account"}
                 {step === "success" && "Connected!"}
+                {step === "pending" && "Review Pending"}
               </h3>
               <p className="text-xs text-white/50">
                 {step === "input" && "Link your Instagram account"}
                 {step === "verify" && `@${verificationData?.username}`}
                 {step === "success" && `@${verificationData?.username}`}
+                {step === "pending" && `@${verificationData?.username}`}
               </p>
             </div>
           </div>
@@ -353,7 +361,27 @@ export default function AddInstagramModal({
             </div>
           )}
 
-          {/* Step 3: Success */}
+          {/* Step 3: Pending admin review */}
+          {step === "pending" && verificationData && (
+            <div className="text-center py-4">
+              <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto mb-4">
+                <Clock className="w-8 h-8 text-amber-400" />
+              </div>
+              <h4 className="text-lg font-bold text-white mb-2">
+                Request Submitted
+              </h4>
+              <p className="text-white/60 text-sm">
+                Your verification request for{" "}
+                <span className="text-white font-medium">@{verificationData.username}</span>{" "}
+                is pending admin review.
+              </p>
+              <p className="text-white/40 text-xs mt-3">
+                An admin will check your Instagram bio for the code and approve or reject within 24 hours. Keep the code in your bio until then.
+              </p>
+            </div>
+          )}
+
+          {/* Step 4: Success */}
           {step === "success" && verificationData && (
             <div className="text-center py-4">
               <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
@@ -413,17 +441,17 @@ export default function AddInstagramModal({
                 <button
                   onClick={handleManualVerify}
                   disabled={isLoading}
-                  className="px-5 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors shadow-lg shadow-green-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-5 py-2 text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 rounded-lg transition-colors shadow-lg shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {isLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Confirming...
+                      Submitting...
                     </>
                   ) : (
                     <>
-                      <Check className="w-4 h-4" />
-                      I&apos;ve Added the Code
+                      <Clock className="w-4 h-4" />
+                      Request Manual Review
                     </>
                   )}
                 </button>
@@ -444,6 +472,15 @@ export default function AddInstagramModal({
                 </button>
               )}
             </>
+          )}
+
+          {step === "pending" && (
+            <button
+              onClick={handleClose}
+              className="px-5 py-2 text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 rounded-lg transition-colors shadow-lg shadow-amber-500/20"
+            >
+              Got it
+            </button>
           )}
 
           {step === "success" && (

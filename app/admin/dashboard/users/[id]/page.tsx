@@ -14,7 +14,9 @@ import {
   ExternalLink,
   Instagram,
   Loader2,
-  User as UserIcon
+  User as UserIcon,
+  Eye,
+  DollarSign,
 } from "lucide-react";
 
 interface AdminUserDetail {
@@ -25,6 +27,8 @@ interface AdminUserDetail {
   role: string;
   isEmailVerified: boolean;
   createdAt: string;
+  totalViews: number;
+  moneyEarned: number;
   _count: {
     campaignSubmissions: number;
   };
@@ -50,9 +54,7 @@ export default function AdminUserDetailPage() {
       try {
         const res = await fetch(`/api/admin/users/${userId}`);
         const data = await res.json();
-        if (data.success) {
-          setUser(data.data.user);
-        }
+        if (data.success) setUser(data.data.user);
       } catch (err) {
         console.error(err);
       } finally {
@@ -87,7 +89,7 @@ export default function AdminUserDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#060510] text-white">
-      {/* ── Header ── */}
+      {/* Header */}
       <div className="sticky top-0 z-10 bg-[#060510]/80 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-4xl mx-auto px-8 py-4 flex items-center gap-4">
           <button
@@ -111,28 +113,19 @@ export default function AdminUserDetailPage() {
 
           <div className="flex-1 space-y-4">
             <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                  @{user.username}
-                  {user.isEmailVerified ? (
-                    <span title="Email Verified">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                    </span>
-                  ) : (
-                    <span title="Email Not Verified">
-                      <AlertCircle className="w-5 h-5 text-amber-400" />
-                    </span>
-                  )}
-                </h1>
-              </div>
-
-              <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
-                  user.role === "ADMIN"
-                    ? "bg-violet-500/15 border-violet-500/30 text-violet-300"
-                    : "bg-white/5 border-white/10 text-white/50"
-                }`}
-              >
+              <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                @{user.username}
+                {user.isEmailVerified ? (
+                  <span title="Email Verified"><CheckCircle2 className="w-5 h-5 text-emerald-400" /></span>
+                ) : (
+                  <span title="Email Not Verified"><AlertCircle className="w-5 h-5 text-amber-400" /></span>
+                )}
+              </h1>
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
+                user.role === "ADMIN"
+                  ? "bg-violet-500/15 border-violet-500/30 text-violet-300"
+                  : "bg-white/5 border-white/10 text-white/50"
+              }`}>
                 {user.role === "ADMIN" ? <ShieldCheck className="w-3.5 h-3.5" /> : <UserIcon className="w-3.5 h-3.5" />}
                 {user.role}
               </span>
@@ -157,7 +150,47 @@ export default function AdminUserDetailPage() {
           </div>
         </div>
 
-        {/* Stats & Actions */}
+        {/* Creator Stats — computed from campaign submissions */}
+        <div className="bg-[#0c0a1e] border border-white/5 rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-bold text-white">Creator Stats</h2>
+            <span className="text-xs text-white/30 font-medium">Aggregated from campaign submissions</span>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-4">
+            <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Video className="w-4 h-4 text-violet-400" />
+                <span className="text-sm text-white/50">Total Videos</span>
+              </div>
+              <p className="text-2xl font-bold text-violet-400">
+                {user._count.campaignSubmissions.toLocaleString()}
+              </p>
+            </div>
+
+            <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Eye className="w-4 h-4 text-cyan-400" />
+                <span className="text-sm text-white/50">Total Views</span>
+              </div>
+              <p className="text-2xl font-bold text-cyan-400">
+                {(user.totalViews ?? 0).toLocaleString()}
+              </p>
+            </div>
+
+            <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <DollarSign className="w-4 h-4 text-emerald-400" />
+                <span className="text-sm text-white/50">Money Earned</span>
+              </div>
+              <p className="text-2xl font-bold text-emerald-400">
+                ${(user.moneyEarned ?? 0).toLocaleString()}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
         <div className="grid sm:grid-cols-2 gap-6">
           <div className="bg-[#0c0a1e] border border-cyan-500/10 rounded-2xl p-6 flex flex-col justify-between hover:border-cyan-500/30 transition-colors">
             <div>
@@ -166,15 +199,14 @@ export default function AdminUserDetailPage() {
               </div>
               <h2 className="text-lg font-bold text-white mb-1">Campaign Submissions</h2>
               <p className="text-sm text-white/40 mb-6 font-medium">
-                {user._count.campaignSubmissions} total submission{user._count.campaignSubmissions !== 1 ? 's' : ''}
+                {user._count.campaignSubmissions} total submission{user._count.campaignSubmissions !== 1 ? "s" : ""}
               </p>
             </div>
-            
             <button
               onClick={() => router.push(`/admin/dashboard/users/${user.id}/submissions`)}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white text-sm font-semibold transition-all"
             >
-              View All Submissions
+              View & Edit Submissions
             </button>
           </div>
 
@@ -187,9 +219,9 @@ export default function AdminUserDetailPage() {
                 {user.connectedAccounts.length} Linked
               </span>
             </div>
-            
+
             <h2 className="text-lg font-bold text-white mb-4">Connected Accounts</h2>
-            
+
             <div className="space-y-3 flex-1">
               {user.connectedAccounts.length === 0 ? (
                 <p className="text-sm text-white/30 text-center py-4">No accounts linked</p>
@@ -200,12 +232,10 @@ export default function AdminUserDetailPage() {
                       <div className="w-8 h-8 rounded-full bg-linear-to-br from-pink-500/20 to-orange-400/20 flex flex-col items-center justify-center">
                         <Instagram className="w-4 h-4 text-pink-400" />
                       </div>
-                      <div>
-                        <p className="text-sm font-medium text-white flex items-center gap-1.5">
-                          @{acc.username}
-                          {acc.isVerified && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
-                        </p>
-                      </div>
+                      <p className="text-sm font-medium text-white flex items-center gap-1.5">
+                        @{acc.username}
+                        {acc.isVerified && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
+                      </p>
                     </div>
                     <a
                       href={acc.accountUrl}

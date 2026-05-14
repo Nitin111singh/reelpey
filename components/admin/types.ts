@@ -26,6 +26,7 @@ export interface Campaign {
   maxSubmissionsPerAccount: number;
   feePerCreator: number;
   maxEarningPerPostPerCreator: number;
+  status: "ACTIVE" | "COMPLETED";
   createdAt: string;
   updatedAt: string;
 }
@@ -35,6 +36,9 @@ export interface Submission {
   userId: string;
   campaignId: string;
   videoLink: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  views: number;
+  earnings: number;
   createdAt: string;
   user: {
     id: string;

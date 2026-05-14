@@ -20,6 +20,7 @@ export async function GET(
           select: { campaignSubmissions: true },
         },
       },
+      // totalViews and moneyEarned are included automatically (scalar fields)
     });
 
     if (!user) {

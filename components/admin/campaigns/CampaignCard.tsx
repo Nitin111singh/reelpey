@@ -1,4 +1,4 @@
-import { DollarSign, TrendingUp, Pencil, Trash2, Video, Image as ImageIcon } from "lucide-react";
+import { DollarSign, TrendingUp, Pencil, Trash2, Video, Image as ImageIcon, CheckCircle2, RotateCcw } from "lucide-react";
 import type { Campaign } from "@/components/admin/types";
 import { PLATFORM_COLORS } from "@/components/admin/constants";
 
@@ -26,21 +26,24 @@ interface CampaignCardProps {
   onEdit: () => void;
   onDelete: () => void;
   onViewSubmissions: () => void;
+  onStatusChange: (id: string, status: "ACTIVE" | "COMPLETED") => void;
 }
 
-/**
- * Card shown in the campaign grid.
- * Displays first image, supported platforms, key budget stats
- * and action buttons (submissions, edit, delete).
- */
 export default function CampaignCard({
   campaign: c,
   onEdit,
   onDelete,
   onViewSubmissions,
+  onStatusChange,
 }: CampaignCardProps) {
+  const isCompleted = c.status === "COMPLETED";
+
   return (
-    <div className="group relative bg-[#0f0d24] border border-white/[0.06] rounded-2xl overflow-hidden hover:border-violet-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-violet-500/10 flex flex-col">
+    <div className={`group relative bg-[#0f0d24] border rounded-2xl overflow-hidden transition-all duration-300 flex flex-col hover:shadow-xl ${
+      isCompleted
+        ? "border-white/[0.04] opacity-75 hover:opacity-90 hover:border-white/10"
+        : "border-white/[0.06] hover:border-violet-500/30 hover:shadow-violet-500/10"
+    }`}>
       {/* ── Image strip ── */}
       <div className="relative h-44 bg-[#0a0818] overflow-hidden shrink-0">
         {c.images.length > 0 ? (
@@ -48,7 +51,7 @@ export default function CampaignCard({
           <img
             src={c.images[0]}
             alt={c.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className={`w-full h-full object-cover transition-transform duration-500 ${isCompleted ? "" : "group-hover:scale-105"}`}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
@@ -56,17 +59,27 @@ export default function CampaignCard({
           </div>
         )}
 
-        {/* fade-to-card at bottom */}
         <div className="absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-[#0f0d24] to-transparent" />
 
-        {/* Extra-image count */}
+        {/* Status badge */}
+        <div className="absolute top-3 left-3">
+          {isCompleted ? (
+            <span className="px-2.5 py-1 rounded-full bg-slate-500/30 backdrop-blur-sm text-[10px] font-semibold text-slate-300 border border-slate-500/40 uppercase tracking-wider">
+              Completed
+            </span>
+          ) : (
+            <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 backdrop-blur-sm text-[10px] font-semibold text-emerald-400 border border-emerald-500/30 uppercase tracking-wider">
+              Active
+            </span>
+          )}
+        </div>
+
         {c.images.length > 1 && (
           <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-sm text-[10px] text-white/70 border border-white/10">
             +{c.images.length - 1} more
           </span>
         )}
 
-        {/* Platform badges */}
         <div className="absolute bottom-3 left-3 flex flex-wrap gap-1">
           {c.supportedPlatforms.slice(0, 3).map((p) => (
             <span
@@ -115,6 +128,26 @@ export default function CampaignCard({
             <Video className="w-3.5 h-3.5" />
             Submissions
           </button>
+
+          {/* Complete / Reactivate */}
+          {isCompleted ? (
+            <button
+              onClick={() => onStatusChange(c.id, "ACTIVE")}
+              title="Reactivate campaign"
+              className="w-9 h-9 flex items-center justify-center rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 hover:text-emerald-300 transition-all"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+            </button>
+          ) : (
+            <button
+              onClick={() => onStatusChange(c.id, "COMPLETED")}
+              title="Mark as completed"
+              className="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-500/10 hover:bg-slate-500/20 text-slate-400 hover:text-slate-300 transition-all"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+            </button>
+          )}
+
           <button
             onClick={onEdit}
             title="Edit campaign"

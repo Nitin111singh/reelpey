@@ -109,7 +109,7 @@ export default function HowItWorks() {
         {/* CTA */}
         <div className="mt-16 text-center reveal">
           <Link
-            href="#"
+            href="/login"
             className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cosmic-violet to-cosmic-cyan px-8 py-4 text-base font-semibold text-white shadow-xl shadow-cosmic-violet/20 transition-all hover:shadow-2xl hover:shadow-cosmic-violet/30 hover:scale-[1.02]"
           >
             Start Earning Now

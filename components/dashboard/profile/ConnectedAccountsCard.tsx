@@ -8,6 +8,8 @@ import {
   ExternalLink,
   Loader2,
   Trash2,
+  XCircle,
+  HourglassIcon,
 } from "lucide-react";
 import type { ConnectedAccount } from "@/components/dashboard/types";
 
@@ -98,6 +100,16 @@ export default function ConnectedAccountsCard({
                       <CheckCircle className="w-3 h-3" />
                       Verified
                     </span>
+                  ) : account.manualVerificationStatus === "PENDING" ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-400 text-xs font-medium" title="Admin is reviewing your Instagram bio">
+                      <HourglassIcon className="w-3 h-3" />
+                      Under Review
+                    </span>
+                  ) : account.manualVerificationStatus === "REJECTED" ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-xs font-medium" title="Verification was rejected. Please try again.">
+                      <XCircle className="w-3 h-3" />
+                      Rejected
+                    </span>
                   ) : (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-xs font-medium">
                       <Clock className="w-3 h-3" />
@@ -108,6 +120,10 @@ export default function ConnectedAccountsCard({
                 <p className="text-xs text-white/40">
                   {account.isVerified && account.verifiedAt
                     ? `Verified on ${new Date(account.verifiedAt).toLocaleDateString()}`
+                    : account.manualVerificationStatus === "PENDING"
+                    ? "Awaiting admin review — keep the code in your bio"
+                    : account.manualVerificationStatus === "REJECTED"
+                    ? "Verification rejected — please re-add the code and try again"
                     : `Added on ${new Date(account.createdAt).toLocaleDateString()}`}
                 </p>
               </div>

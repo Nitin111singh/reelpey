@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Menu, X, Zap } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -17,16 +18,20 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "glass py-3 shadow-lg shadow-black/20"
-          : "bg-transparent py-5"
+        scrolled ? "glass py-3 shadow-lg shadow-black/20" : "bg-transparent py-5"
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-cosmic-violet to-cosmic-cyan transition-transform group-hover:scale-110">
-            <Zap className="h-5 w-5 text-white" />
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="relative h-9 w-9 rounded-xl overflow-hidden ring-1 ring-white/10 group-hover:ring-cosmic-violet/40 transition-all shadow-lg shadow-black/30">
+            <Image
+              src="/reelpeyy.png"
+              alt="Reelpey"
+              fill
+              className="object-cover"
+              priority
+            />
           </div>
           <span className="text-xl font-bold tracking-tight text-white">
             Reel<span className="gradient-text">pey</span>
@@ -35,22 +40,13 @@ export default function Navbar() {
 
         {/* Desktop Links */}
         <div className="hidden items-center gap-8 md:flex">
-          <Link
-            href="#campaigns"
-            className="text-sm font-medium text-white/60 transition-colors hover:text-white"
-          >
+          <Link href="#campaigns" className="text-sm font-medium text-white/60 transition-colors hover:text-white">
             Campaigns
           </Link>
-          <Link
-            href="#how-it-works"
-            className="text-sm font-medium text-white/60 transition-colors hover:text-white"
-          >
+          <Link href="#how-it-works" className="text-sm font-medium text-white/60 transition-colors hover:text-white">
             How It Works
           </Link>
-          <Link
-            href="#"
-            className="text-sm font-medium text-white/60 transition-colors hover:text-white"
-          >
+          <Link href="#" className="text-sm font-medium text-white/60 transition-colors hover:text-white">
             Creators
           </Link>
         </div>
@@ -71,17 +67,13 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile Menu Toggle */}
+        {/* Mobile Toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           className="text-white/80 md:hidden"
           aria-label="Toggle menu"
         >
-          {mobileOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
+          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
@@ -89,25 +81,13 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="glass mt-2 mx-4 rounded-2xl p-6 md:hidden animate-fade-in-up">
           <div className="flex flex-col gap-4">
-            <a
-              href="#campaigns"
-              className="text-sm font-medium text-white/70 hover:text-white transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
+            <a href="#campaigns" className="text-sm font-medium text-white/70 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>
               Campaigns
             </a>
-            <a
-              href="#how-it-works"
-              className="text-sm font-medium text-white/70 hover:text-white transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
+            <a href="#how-it-works" className="text-sm font-medium text-white/70 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>
               How It Works
             </a>
-            <a
-              href="#"
-              className="text-sm font-medium text-white/70 hover:text-white transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
+            <a href="#" className="text-sm font-medium text-white/70 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>
               Creators
             </a>
             <hr className="border-white/10" />

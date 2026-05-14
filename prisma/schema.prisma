@@ -32,6 +32,8 @@ model User {
   resetPasswordToken     String?
   tokenExpiry            DateTime?
   resetPasswordTokenExpiry DateTime?
+  totalViews             Int                  @default(0)
+  moneyEarned            Float                @default(0)
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
   connectedAccounts      ConnectedAccount[]
@@ -43,21 +45,25 @@ model User {
 }
 
 model ConnectedAccount {
-  id               String    @id @default(uuid())
-  userId           String
-  username         String
-  accountUrl       String
-  verificationCode String
-  isVerified       Boolean   @default(false)
-  verifiedAt       DateTime?
-  codeExpiresAt    DateTime
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                        String                    @id @default(uuid())
+  userId                    String
+  username                  String
+  accountUrl                String
+  verificationCode          String
+  isVerified                Boolean                   @default(false)
+  verifiedAt                DateTime?
+  codeExpiresAt             DateTime
+  manualVerificationStatus  VerificationRequestStatus @default(NONE)
+  adminNotes                String?
+  reviewedAt                DateTime?
+  createdAt                 DateTime                  @default(now())
+  updatedAt                 DateTime                  @updatedAt
+  user                      User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, username])
   @@index([userId])
   @@index([verificationCode])
+  @@index([manualVerificationStatus])
   @@map("connected_accounts")
 }
 
@@ -77,27 +83,33 @@ model Campaign {
   feePerCreator                 Float
   /// Maximum earning a creator can make per post.
   maxEarningPerPostPerCreator   Float
+  status                        CampaignStatus       @default(ACTIVE)
   createdAt                     DateTime             @default(now())
   updatedAt                     DateTime             @updatedAt
   submissions                   CampaignSubmission[]
 
   @@index([name])
+  @@index([status])
   @@map("campaigns")
 }
 
 /// A video submission made by a user for a specific campaign.
 model CampaignSubmission {
-  id         String   @id @default(uuid())
+  id         String           @id @default(uuid())
   userId     String
   campaignId String
   videoLink  String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  status     SubmissionStatus @default(PENDING)
+  views      Int              @default(0)
+  earnings   Float            @default(0)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaign   Campaign         @relation(fields: [campaignId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([campaignId])
+  @@index([status])
   @@map("campaign_submissions")
 }
 
@@ -105,6 +117,24 @@ enum CampaignRequestStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum VerificationRequestStatus {
+  NONE
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CampaignStatus {
+  ACTIVE
+  COMPLETED
 }
 
 /// A campaign request submitted by a potential advertiser via the public form.

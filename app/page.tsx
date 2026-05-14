@@ -1,8 +1,9 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Marquee from "@/components/Marquee";
-import Campaigns from "@/components/Campaigns";
+import CreatorStats from "@/components/CreatorStats";
 import HowItWorks from "@/components/HowItWorks";
+import BrandsSection from "@/components/BrandsSection";
 import CampaignRequestSection from "@/components/CampaignRequestSection";
 import Footer from "@/components/Footer";
 
@@ -13,8 +14,9 @@ export default function Home() {
       <main>
         <Hero />
         <Marquee />
-        <Campaigns />
+        <CreatorStats />
         <HowItWorks />
+        <BrandsSection />
         <CampaignRequestSection />
       </main>
       <Footer />
