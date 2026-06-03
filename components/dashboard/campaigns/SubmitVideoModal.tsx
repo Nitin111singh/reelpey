@@ -46,17 +46,19 @@ export default function SubmitVideoModal({
         <form onSubmit={onSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-5">
           <div>
             <p className="text-sm text-white/50 mb-4">
-              Paste a link to your video for{" "}
+              Paste the link to your{" "}
+              <span className="text-white font-medium">Instagram</span> reel or
+              post for{" "}
               <span className="text-white font-medium">{campaignName}</span>.
               You can submit up to{" "}
               <span className="text-white font-medium">
                 {maxSubmissionsPerAccount}
               </span>{" "}
-              videos for this campaign.
+              videos for this campaign. Each link can only be submitted once.
             </p>
 
             <label className="text-sm font-medium text-white/70 mb-1.5 block">
-              Video URL
+              Instagram URL
             </label>
             <div className="relative">
               <LinkIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
@@ -65,7 +67,7 @@ export default function SubmitVideoModal({
                 required
                 value={videoLink}
                 onChange={(e) => onVideoLinkChange(e.target.value)}
-                placeholder="https://www.youtube.com/watch?v=..."
+                placeholder="https://www.instagram.com/reel/..."
                 className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/30 transition-all"
               />
             </div>

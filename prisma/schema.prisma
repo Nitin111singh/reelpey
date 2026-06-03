@@ -25,6 +25,7 @@ model User {
   username               String               @unique
   email                  String               @unique
   phoneNumber            String?
+  upiId                  String?
   password               String
   role                   Role                 @default(USER)
   isEmailVerified        Boolean              @default(false)
@@ -99,6 +100,8 @@ model CampaignSubmission {
   userId     String
   campaignId String
   videoLink  String
+  /// Normalized Instagram media shortcode (from /reel|/p|/tv/<shortcode>); globally unique to block duplicate submissions.
+  mediaShortcode String?      @unique
   status     SubmissionStatus @default(PENDING)
   views      Int              @default(0)
   earnings   Float            @default(0)

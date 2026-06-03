@@ -6,6 +6,7 @@ import {
   ArrowLeft,
   Mail,
   Phone,
+  Wallet,
   Calendar,
   CheckCircle2,
   AlertCircle,
@@ -24,6 +25,7 @@ interface AdminUserDetail {
   username: string;
   email: string;
   phoneNumber: string | null;
+  upiId: string | null;
   role: string;
   isEmailVerified: boolean;
   createdAt: string;
@@ -140,6 +142,12 @@ export default function AdminUserDetailPage() {
                 <div className="flex items-center gap-2">
                   <Phone className="w-4 h-4 text-white/30" />
                   {user.phoneNumber}
+                </div>
+              )}
+              {user.upiId && (
+                <div className="flex items-center gap-2">
+                  <Wallet className="w-4 h-4 text-white/30" />
+                  {user.upiId}
                 </div>
               )}
               <div className="flex items-center gap-2">

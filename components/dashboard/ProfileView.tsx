@@ -11,12 +11,15 @@ interface ProfileViewProps {
     username: string;
     email: string;
     phoneNumber?: string | null;
+    upiId?: string | null;
     memberSince: string;
   };
   connectedAccounts: ConnectedAccount[];
   isLoadingAccounts: boolean;
   onAddAccount: () => void;
   onDeleteAccount: (id: string) => void;
+  onPhoneUpdated?: (phone: string | null) => void;
+  onUpiUpdated?: (upiId: string | null) => void;
 }
 
 export default function ProfileView({
@@ -25,6 +28,8 @@ export default function ProfileView({
   isLoadingAccounts,
   onAddAccount,
   onDeleteAccount,
+  onPhoneUpdated,
+  onUpiUpdated,
 }: ProfileViewProps) {
   return (
     <div className="max-w-5xl mx-auto p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
@@ -43,7 +48,11 @@ export default function ProfileView({
 
       <StatisticsCard />
 
-      <ProfileBottomGrid user={user} />
+      <ProfileBottomGrid
+        user={user}
+        onPhoneUpdated={onPhoneUpdated}
+        onUpiUpdated={onUpiUpdated}
+      />
     </div>
   );
 }

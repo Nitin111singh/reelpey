@@ -61,6 +61,49 @@ class InstagramService {
   }
 
   /**
+   * Extract the Instagram media shortcode from a post/reel URL.
+   * Used to validate submission links and to dedupe (the same reel pasted
+   * with different query strings / scheme / www|m / trailing slash normalizes
+   * to the same shortcode).
+   *
+   * Returns the shortcode, or null when the input isn't a valid IG media URL
+   * (e.g. a profile link or a non-Instagram URL).
+   */
+  extractMediaShortcode(input: string): string | null {
+    try {
+      let urlString = input.trim();
+      if (!urlString.startsWith("http")) {
+        urlString = `https://${urlString}`;
+      }
+
+      const url = new URL(urlString);
+      const host = url.hostname.toLowerCase();
+      if (
+        host !== "instagram.com" &&
+        host !== "www.instagram.com" &&
+        host !== "m.instagram.com"
+      ) {
+        return null;
+      }
+
+      const pathParts = url.pathname.split("/").filter(Boolean);
+      const mediaTypes = ["reel", "reels", "p", "tv"];
+      if (pathParts.length < 2 || !mediaTypes.includes(pathParts[0].toLowerCase())) {
+        return null;
+      }
+
+      const shortcode = pathParts[1];
+      if (!/^[A-Za-z0-9_-]+$/.test(shortcode)) {
+        return null;
+      }
+
+      return shortcode;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
    * Fetch the actual Instagram bio text for a given username.
    * Returns null only when we genuinely cannot reach/parse the profile.
    *

@@ -66,6 +66,28 @@ export const updatePhoneSchema = z.object({
     .or(z.literal("")),
 });
 
+const upiIdField = z
+  .string()
+  .regex(
+    /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/,
+    "Enter a valid UPI ID (e.g. name@bank)"
+  )
+  .optional()
+  .or(z.literal(""));
+
+export const updateUpiSchema = z.object({
+  upiId: upiIdField,
+});
+
+/**
+ * Combined profile update — every field optional so callers can send
+ * partial payloads (just phoneNumber, just upiId, or both).
+ */
+export const updateProfileSchema = z.object({
+  phoneNumber: updatePhoneSchema.shape.phoneNumber,
+  upiId: upiIdField,
+});
+
 // ── Inferred Types ───────────────────────────────────
 
 export type SignupInput = z.infer<typeof signupSchema>;
@@ -75,6 +97,8 @@ export type ResendVerificationInput = z.infer<typeof resendVerificationSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type UpdatePhoneInput = z.infer<typeof updatePhoneSchema>;
+export type UpdateUpiInput = z.infer<typeof updateUpiSchema>;
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 
 // ── JWT & Response ───────────────────────────────────
 
@@ -90,6 +114,7 @@ export interface AuthResponse {
     username: string;
     email: string;
     phoneNumber: string | null;
+    upiId: string | null;
     role: string;
     isEmailVerified: boolean;
     createdAt: Date;

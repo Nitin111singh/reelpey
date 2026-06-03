@@ -11,7 +11,7 @@ import AddInstagramModal from "@/components/AddInstagramModal";
 import type { Tab, ConnectedAccount } from "@/components/dashboard/types";
 
 export default function DashboardPage() {
-  const { user: authUser, logout } = useAuth();
+  const { user: authUser, login, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>("profile");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isAddInstagramOpen, setIsAddInstagramOpen] = useState(false);
@@ -23,9 +23,18 @@ export default function DashboardPage() {
     username: authUser?.username || "Guest",
     email: authUser?.email || "",
     phoneNumber: authUser?.phoneNumber ?? null,
+    upiId: authUser?.upiId ?? null,
     memberSince: authUser?.createdAt
       ? new Date(authUser.createdAt).toLocaleDateString()
       : "Present",
+  };
+
+  const handlePhoneUpdated = (phoneNumber: string | null) => {
+    if (authUser) login({ ...authUser, phoneNumber });
+  };
+
+  const handleUpiUpdated = (upiId: string | null) => {
+    if (authUser) login({ ...authUser, upiId });
   };
 
   const fetchConnectedAccounts = useCallback(async () => {
@@ -82,6 +91,8 @@ export default function DashboardPage() {
             isLoadingAccounts={isLoadingAccounts}
             onAddAccount={() => setIsAddInstagramOpen(true)}
             onDeleteAccount={handleDeleteAccount}
+            onPhoneUpdated={handlePhoneUpdated}
+            onUpiUpdated={handleUpiUpdated}
           />
         )}
         {activeTab === "campaigns" && <CampaignsView />}
