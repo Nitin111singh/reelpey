@@ -1,45 +1,34 @@
 "use client";
 
-import { User, Copy, Wallet, Trash2 } from "lucide-react";
+import { User, Copy, Trash2 } from "lucide-react";
 import PhoneNumberCard from "@/components/dashboard/profile/PhoneNumberCard";
+import PaymentMethodCard from "@/components/dashboard/profile/PaymentMethodCard";
 
 interface ProfileBottomGridProps {
   user: {
     username: string;
     email: string;
     phoneNumber?: string | null;
+    upiId?: string | null;
   };
+  onPhoneUpdated?: (phone: string | null) => void;
+  onUpiUpdated?: (upiId: string | null) => void;
 }
 
-export default function ProfileBottomGrid({ user }: ProfileBottomGridProps) {
+export default function ProfileBottomGrid({
+  user,
+  onPhoneUpdated,
+  onUpiUpdated,
+}: ProfileBottomGridProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-      <PhoneNumberCard phoneNumber={user.phoneNumber} />
-      <PaymentMethodsCard />
+      <PhoneNumberCard
+        phoneNumber={user.phoneNumber}
+        onPhoneUpdated={onPhoneUpdated}
+      />
+      <PaymentMethodCard upiId={user.upiId} onUpiUpdated={onUpiUpdated} />
       <LoginMethodsCard email={user.email} />
       <UsernameCard username={user.username} />
-    </div>
-  );
-}
-
-/* ── Payment Methods ── */
-function PaymentMethodsCard() {
-  return (
-    <div className="bg-[#14161F] border border-white/5 rounded-2xl p-4 sm:p-6">
-      <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">
-        Payment Methods
-      </h3>
-      <div className="border border-dashed border-white/10 rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center h-[180px] sm:h-[200px]">
-        <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 text-white/30">
-          <Wallet className="w-6 h-6" />
-        </div>
-        <p className="text-white font-medium mb-1 text-sm sm:text-base">
-          No payment method added
-        </p>
-        <p className="text-xs sm:text-sm text-white/40">
-          Add a payment method to receive earnings
-        </p>
-      </div>
     </div>
   );
 }

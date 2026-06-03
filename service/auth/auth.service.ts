@@ -71,6 +71,7 @@ class AuthService {
         username: user.username,
         email: user.email,
         phoneNumber: user.phoneNumber,
+        upiId: user.upiId,
         role: user.role,
         isEmailVerified: user.isEmailVerified,
         createdAt: user.createdAt,
@@ -193,6 +194,7 @@ class AuthService {
         username: user.username,
         email: user.email,
         phoneNumber: user.phoneNumber,
+        upiId: user.upiId,
         role: user.role,
         isEmailVerified: user.isEmailVerified,
         createdAt: user.createdAt,
@@ -287,6 +289,31 @@ class AuthService {
     });
 
     return { phoneNumber: user.phoneNumber };
+  }
+
+  /**
+   * Update the authenticated user's profile fields (phone, UPI ID).
+   * Only fields explicitly provided are changed; empty strings clear a field.
+   */
+  async updateProfile(
+    userId: string,
+    data: { phoneNumber?: string; upiId?: string }
+  ): Promise<{ phoneNumber: string | null; upiId: string | null }> {
+    const updateData: { phoneNumber?: string | null; upiId?: string | null } =
+      {};
+    if (data.phoneNumber !== undefined) {
+      updateData.phoneNumber = data.phoneNumber || null;
+    }
+    if (data.upiId !== undefined) {
+      updateData.upiId = data.upiId || null;
+    }
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+    });
+
+    return { phoneNumber: user.phoneNumber, upiId: user.upiId };
   }
 }
 

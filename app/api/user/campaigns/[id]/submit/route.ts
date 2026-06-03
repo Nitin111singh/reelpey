@@ -1,15 +1,20 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { successResponse, errorResponse } from "@/lib/api-response";
 import { requireAuth } from "@/lib/auth";
 import { AppError, NotFoundError } from "@/lib/errors";
+import instagramService from "@/service/instagram/instagram.service";
 
 const submitSchema = z.object({
   videoLink: z
     .string()
     .url("Please provide a valid video URL")
-    .min(1, "Video link is required"),
+    .min(1, "Video link is required")
+    .refine((v) => instagramService.extractMediaShortcode(v) !== null, {
+      message: "Please submit a valid Instagram post or reel link.",
+    }),
 });
 
 /**
@@ -34,6 +39,18 @@ export async function POST(
     const body = await request.json();
     const { videoLink } = submitSchema.parse(body);
 
+    // Normalize to the Instagram media shortcode (validated by the schema above)
+    const mediaShortcode = instagramService.extractMediaShortcode(videoLink)!;
+
+    // Reject duplicate links (same reel can only be submitted once, globally)
+    const duplicate = await prisma.campaignSubmission.findFirst({
+      where: { mediaShortcode },
+      select: { id: true },
+    });
+    if (duplicate) {
+      return errorResponse("This link has already been submitted.", 409);
+    }
+
     // Check submission limit per user
     const existingCount = await prisma.campaignSubmission.count({
       where: { campaignId: id, userId },
@@ -47,15 +64,26 @@ export async function POST(
     }
 
     // Create submission
-    const submission = await prisma.campaignSubmission.create({
-      data: {
-        userId,
-        campaignId: id,
-        videoLink,
-      },
-    });
-
-    return successResponse(submission, 201);
+    try {
+      const submission = await prisma.campaignSubmission.create({
+        data: {
+          userId,
+          campaignId: id,
+          videoLink,
+          mediaShortcode,
+        },
+      });
+      return successResponse(submission, 201);
+    } catch (createError) {
+      // Race-safe fallback: unique constraint on mediaShortcode
+      if (
+        createError instanceof Prisma.PrismaClientKnownRequestError &&
+        createError.code === "P2002"
+      ) {
+        return errorResponse("This link has already been submitted.", 409);
+      }
+      throw createError;
+    }
   } catch (error) {
     if (error instanceof z.ZodError) {
       const { fromZodError } = await import("zod-validation-error");

@@ -9,6 +9,7 @@ export interface User {
   username: string;
   email: string;
   phoneNumber?: string | null;
+  upiId?: string | null;
   role: string;
   isEmailVerified: boolean;
   createdAt: string | Date;
