@@ -26,6 +26,7 @@ export interface Campaign {
   maxSubmissionsPerAccount: number;
   feePerCreator: number;
   maxEarningPerPostPerCreator: number;
+  completionPercentage: number;
   status: "ACTIVE" | "COMPLETED";
   createdAt: string;
   updatedAt: string;

@@ -13,6 +13,7 @@ interface FormState {
   maxSubmissionsPerAccount: string;
   feePerCreator: string;
   maxEarningPerPostPerCreator: string;
+  completionPercentage: string;
   supportedPlatforms: string[];
 }
 
@@ -51,6 +52,8 @@ export default function CampaignFormModal({
     feePerCreator: editCampaign?.feePerCreator?.toString() ?? "",
     maxEarningPerPostPerCreator:
       editCampaign?.maxEarningPerPostPerCreator?.toString() ?? "",
+    completionPercentage:
+      editCampaign?.completionPercentage?.toString() ?? "0",
     supportedPlatforms: editCampaign?.supportedPlatforms ?? [],
   });
 
@@ -120,6 +123,7 @@ export default function CampaignFormModal({
       fd.append("maxSubmissionsPerAccount", form.maxSubmissionsPerAccount);
       fd.append("feePerCreator", form.feePerCreator);
       fd.append("maxEarningPerPostPerCreator", form.maxEarningPerPostPerCreator);
+      fd.append("completionPercentage", form.completionPercentage || "0");
       fd.append("supportedPlatforms", JSON.stringify(form.supportedPlatforms));
       newFiles.forEach((f) => fd.append("images", f));
 
@@ -229,7 +233,7 @@ export default function CampaignFormModal({
         {/* ── Budget + Max submissions ── */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-white/70">Total Budget ($)</label>
+            <label className="text-sm font-medium text-white/70">Total Budget (₹)</label>
             <input
               required
               type="number"
@@ -259,7 +263,7 @@ export default function CampaignFormModal({
         {/* ── Fee + Max earning ── */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-white/70">Fee Per Creator ($)</label>
+            <label className="text-sm font-medium text-white/70">Fee Per Creator (₹)</label>
             <input
               required
               type="number"
@@ -273,7 +277,7 @@ export default function CampaignFormModal({
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-white/70">
-              Max Earning / Post / Creator ($)
+              Max Earning / Post / Creator (₹)
             </label>
             <input
               required
@@ -286,6 +290,37 @@ export default function CampaignFormModal({
               className={inputCls}
             />
           </div>
+        </div>
+
+        {/* ── Completion percentage ── */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium text-white/70">
+              Campaign Completion
+            </label>
+            <span className="inline-flex items-center justify-center min-w-[3.25rem] rounded-lg bg-violet-500/15 border border-violet-500/30 px-2.5 py-1 text-sm font-bold text-violet-200 tabular-nums">
+              {Math.min(100, Math.max(0, Number(form.completionPercentage) || 0))}%
+            </span>
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            step={1}
+            value={Math.min(100, Math.max(0, Number(form.completionPercentage) || 0))}
+            onChange={(e) => set("completionPercentage", e.target.value)}
+            className="campaign-progress-slider w-full"
+            style={{
+              background: `linear-gradient(to right, #8b5cf6 0%, #06b6d4 ${
+                Math.min(100, Math.max(0, Number(form.completionPercentage) || 0))
+              }%, rgba(255,255,255,0.08) ${
+                Math.min(100, Math.max(0, Number(form.completionPercentage) || 0))
+              }%)`,
+            }}
+          />
+          <p className="text-xs text-white/30">
+            Drag to set how much of the campaign is completed. Creators see this as a progress bar.
+          </p>
         </div>
 
         {/* ── Platforms ── */}

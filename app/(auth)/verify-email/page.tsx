@@ -226,13 +226,45 @@ function VerifyEmailContent() {
                   "The verification link is invalid or has expired."}
               </p>
               <div className="pt-4 space-y-3">
-                <Link
-                  href="/signup"
-                  className="group w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cosmic-violet to-cosmic-blue px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-cosmic-violet/20 transition-all hover:shadow-xl hover:shadow-cosmic-violet/30 hover:scale-[1.01]"
-                >
-                  Try Again
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </Link>
+                {/* Resend a fresh link when we know the email */}
+                {email ? (
+                  <button
+                    onClick={handleResend}
+                    disabled={resendStatus === "loading" || resendStatus === "success"}
+                    className="group w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cosmic-violet to-cosmic-blue px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-cosmic-violet/20 transition-all hover:shadow-xl hover:shadow-cosmic-violet/30 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  >
+                    {resendStatus === "loading" ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : resendStatus === "success" ? (
+                      <>
+                        <CheckCircle2 className="w-4 h-4" />
+                        Email Sent!
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="w-4 h-4" />
+                        Send a New Verification Link
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  <Link
+                    href="/signup"
+                    className="group w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cosmic-violet to-cosmic-blue px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-cosmic-violet/20 transition-all hover:shadow-xl hover:shadow-cosmic-violet/30 hover:scale-[1.01]"
+                  >
+                    Try Again
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                )}
+
+                {/* Resend feedback messages */}
+                {resendStatus === "error" && resendMessage && (
+                  <p className="text-xs text-red-400 text-center">{resendMessage}</p>
+                )}
+                {resendStatus === "success" && resendMessage && (
+                  <p className="text-xs text-emerald-400 text-center">{resendMessage}</p>
+                )}
+
                 <Link
                   href="/login"
                   className="block text-sm text-white/40 hover:text-white/60 transition-colors"

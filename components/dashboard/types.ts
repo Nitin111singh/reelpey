@@ -20,6 +20,7 @@ export interface CampaignItem {
   maxSubmissionsPerAccount: number;
   feePerCreator: number;
   maxEarningPerPostPerCreator: number;
+  completionPercentage: number;
   createdAt: string;
   updatedAt: string;
 }

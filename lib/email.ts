@@ -17,7 +17,9 @@ export async function sendVerificationEmail(
   to: string,
   token: string
 ): Promise<void> {
-  const verifyUrl = `${config.APP_URL}/verify-email?token=${token}`;
+  const verifyUrl = `${config.APP_URL}/verify-email?token=${token}&email=${encodeURIComponent(
+    to
+  )}`;
   const html = getVerificationEmailHtml(verifyUrl);
   const emailService = getEmailService();
 

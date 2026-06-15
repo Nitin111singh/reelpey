@@ -229,6 +229,7 @@ class CampaignService {
     maxSubmissionsPerAccount: number;
     feePerCreator: number;
     maxEarningPerPostPerCreator: number;
+    completionPercentage: number;
     status: string;
     createdAt: Date;
     updatedAt: Date;

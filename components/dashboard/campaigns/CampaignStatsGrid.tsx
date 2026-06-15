@@ -1,6 +1,6 @@
 "use client";
 
-import { DollarSign, Users, TrendingUp, Video } from "lucide-react";
+import { IndianRupee, Users, TrendingUp, Video } from "lucide-react";
 
 interface CampaignStatsGridProps {
   totalBudget: number;
@@ -18,23 +18,23 @@ export default function CampaignStatsGrid({
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
       <StatCard
-        icon={DollarSign}
+        icon={IndianRupee}
         label="Total Budget"
-        value={`$${totalBudget.toLocaleString()}`}
+        value={`₹${totalBudget.toLocaleString()}`}
         color="text-emerald-400"
         bg="bg-emerald-500/10"
       />
       <StatCard
         icon={Users}
         label="Fee / Creator"
-        value={`$${feePerCreator.toLocaleString()}`}
+        value={`₹${feePerCreator.toLocaleString()}`}
         color="text-violet-400"
         bg="bg-violet-500/10"
       />
       <StatCard
         icon={TrendingUp}
         label="Max / Post"
-        value={`$${maxEarningPerPostPerCreator.toLocaleString()}`}
+        value={`₹${maxEarningPerPostPerCreator.toLocaleString()}`}
         color="text-red-400"
         bg="bg-red-500/10"
       />

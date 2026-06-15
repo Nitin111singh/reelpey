@@ -33,7 +33,7 @@ export default function AdminDashboardLayout({
   const isCampaignsActive = !isUsersActive && !isRequestsActive && !isIgVerificationsActive;
 
   return (
-    <div className="flex h-screen bg-[#060510] text-white overflow-hidden">
+    <div className="flex h-dvh bg-[#060510] text-white overflow-hidden">
       {/* ── Sidebar ── */}
       <aside className="w-[72px] bg-[#0c0a1e] border-r border-white/5 flex flex-col items-center py-6 shrink-0 z-20 overflow-y-auto">
         {/* Logo */}

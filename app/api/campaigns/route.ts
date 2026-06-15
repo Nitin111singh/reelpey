@@ -56,6 +56,10 @@ export async function POST(request: NextRequest) {
       maxEarningPerPostPerCreator: Number(
         formData.get("maxEarningPerPostPerCreator"),
       ),
+      completionPercentage:
+        formData.get("completionPercentage") !== null
+          ? Number(formData.get("completionPercentage"))
+          : 0,
     };
 
     // ── Validate ─────────────────────────────────────────────────────────────

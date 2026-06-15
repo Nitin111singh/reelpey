@@ -74,14 +74,33 @@
   * {
     @apply border-border;
   }
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    /* Stop mobile browsers from auto-inflating text on orientation change */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
   body {
     background: var(--background);
     color: var(--foreground);
     font-family: var(--font-inter), system-ui, sans-serif;
     overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
   }
-  html {
-    scroll-behavior: smooth;
+
+  /*
+   * iOS Safari auto-zooms the viewport when a form control with a font-size
+   * below 16px gains focus — this is the "screen suddenly zooms in" bug.
+   * Force at least 16px on small screens so focusing an input never zooms.
+   */
+  @media (max-width: 640px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px;
+    }
   }
 }
 
@@ -245,6 +264,45 @@
   border-radius: 999px;
   background: linear-gradient(90deg, var(--cosmic-violet), var(--cosmic-cyan));
   transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Campaign completion range slider ─────────────── */
+
+.campaign-progress-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+}
+
+.campaign-progress-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #8b5cf6;
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.campaign-progress-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 6px rgba(139, 92, 246, 0.25);
+}
+
+.campaign-progress-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #8b5cf6;
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+  cursor: pointer;
 }
 
 /* ── Scrollbar ────────────────────────────────────── */

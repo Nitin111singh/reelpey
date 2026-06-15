@@ -11,7 +11,7 @@ import {
   Film,
   User as UserIcon,
   Eye,
-  DollarSign,
+  IndianRupee,
   Pencil,
   Check,
   X,
@@ -291,7 +291,7 @@ export default function AdminUserSubmissionsPage() {
                               />
                             ) : (
                               <div className="flex items-center justify-end gap-1 text-emerald-400 font-semibold text-sm">
-                                <DollarSign className="w-3.5 h-3.5" />
+                                <IndianRupee className="w-3.5 h-3.5" />
                                 {(s.earnings ?? 0).toLocaleString()}
                               </div>
                             )}

@@ -4,9 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { z } from "zod";
 import { loginSchema, type LoginInput } from "@/types/auth";
-import { Film, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
+import { Film, Eye, EyeOff, Loader2, ArrowRight, RefreshCw, CheckCircle2 } from "lucide-react";
 
 type FieldErrors = Partial<Record<keyof LoginInput, string>>;
 
@@ -33,6 +32,42 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Unverified-email recovery (shown when login returns 403)
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [resendStatus, setResendStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [resendMessage, setResendMessage] = useState("");
+
+  async function handleResend() {
+    if (!form.email || resendStatus === "loading") return;
+
+    setResendStatus("loading");
+    setResendMessage("");
+    try {
+      const res = await fetch("/api/auth/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setResendStatus("error");
+        setResendMessage(
+          data.error?.message ?? "Failed to resend. Please try again."
+        );
+        return;
+      }
+
+      setResendStatus("success");
+      setResendMessage("Verification email sent! Check your inbox.");
+    } catch {
+      setResendStatus("error");
+      setResendMessage("Something went wrong. Please try again.");
+    }
+  }
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -44,6 +79,9 @@ export default function LoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setServerError(null);
+    setNeedsVerification(false);
+    setResendStatus("idle");
+    setResendMessage("");
 
     // Client-side validation
     const result = loginSchema.safeParse(form);
@@ -71,6 +109,8 @@ export default function LoginPage() {
         setServerError(
           data.error?.message ?? "Login failed. Please try again."
         );
+        // 403 = email not verified — offer a resend path instead of a dead end
+        if (res.status === 403) setNeedsVerification(true);
         return;
       }
 
@@ -141,6 +181,42 @@ export default function LoginPage() {
           {serverError && (
             <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
               {serverError}
+            </div>
+          )}
+
+          {/* Unverified email — let the user resend the verification link */}
+          {needsVerification && (
+            <div className="rounded-xl border border-cosmic-blue/25 bg-cosmic-blue/5 px-4 py-3 space-y-3">
+              <p className="text-xs text-white/50 leading-relaxed">
+                Haven&apos;t received it? We can send a new verification link to{" "}
+                <span className="text-white/80 font-medium">{form.email}</span>.
+              </p>
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={resendStatus === "loading" || resendStatus === "success"}
+                className="w-full flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white/70 hover:bg-white/[0.08] hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {resendStatus === "loading" ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : resendStatus === "success" ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span className="text-emerald-400">Email Sent!</span>
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4" />
+                    Resend Verification Email
+                  </>
+                )}
+              </button>
+              {resendStatus === "error" && resendMessage && (
+                <p className="text-xs text-red-400">{resendMessage}</p>
+              )}
+              {resendStatus === "success" && resendMessage && (
+                <p className="text-xs text-emerald-400">{resendMessage}</p>
+              )}
             </div>
           )}
 

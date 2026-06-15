@@ -1,4 +1,4 @@
-import { DollarSign, TrendingUp, Pencil, Trash2, Video, Image as ImageIcon, CheckCircle2, RotateCcw } from "lucide-react";
+import { IndianRupee, TrendingUp, Pencil, Trash2, Video, Image as ImageIcon, CheckCircle2, RotateCcw } from "lucide-react";
 import type { Campaign } from "@/components/admin/types";
 import { PLATFORM_COLORS } from "@/components/admin/constants";
 
@@ -106,17 +106,35 @@ export default function CampaignCard({
 
         <div className="grid grid-cols-2 gap-3 mb-4 mt-auto">
           <StatChip
-            icon={DollarSign}
+            icon={IndianRupee}
             label="Budget"
-            value={`$${c.totalBudget.toLocaleString()}`}
+            value={`₹${c.totalBudget.toLocaleString()}`}
             color="text-emerald-400"
           />
           <StatChip
             icon={TrendingUp}
             label="Fee / Creator"
-            value={`$${c.feePerCreator.toLocaleString()}`}
+            value={`₹${c.feePerCreator.toLocaleString()}`}
             color="text-violet-400"
           />
+        </div>
+
+        {/* ── Completion progress ── */}
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-1.5 text-[10px] text-white/40">
+            <span className="uppercase tracking-wider">Completed</span>
+            <span className="font-semibold text-white/70 tabular-nums">
+              {Math.min(100, Math.max(0, Math.round(c.completionPercentage || 0)))}%
+            </span>
+          </div>
+          <div className="progress-bar" style={{ height: 6 }}>
+            <div
+              className="progress-bar-fill"
+              style={{
+                width: `${Math.min(100, Math.max(0, Math.round(c.completionPercentage || 0)))}%`,
+              }}
+            />
+          </div>
         </div>
 
         {/* ── Action footer ── */}

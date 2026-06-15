@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import {
   Compass,
   Video,
-  DollarSign,
+  IndianRupee,
   Eye,
   Loader2,
   ChevronDown,
@@ -72,9 +72,9 @@ export default function StatisticsCard() {
           <>
             <StatItem icon={Video} label="Total videos" value={String(stats?.totalVideos ?? 0)} />
             <StatItem
-              icon={DollarSign}
+              icon={IndianRupee}
               label="Money earned"
-              value={`$${(stats?.moneyEarned ?? 0).toLocaleString()}`}
+              value={`₹${(stats?.moneyEarned ?? 0).toLocaleString()}`}
             />
             <StatItem icon={Eye} label="Total views" value={(stats?.totalViews ?? 0).toLocaleString()} />
           </>
@@ -152,7 +152,7 @@ export default function StatisticsCard() {
                         {c.totalViews.toLocaleString()}
                       </div>
                       <div className="flex items-center gap-1 text-emerald-400 text-xs font-semibold">
-                        <DollarSign className="w-3 h-3" />
+                        <IndianRupee className="w-3 h-3" />
                         {c.totalEarnings.toLocaleString()}
                       </div>
                     </div>
