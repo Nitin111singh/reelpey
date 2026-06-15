@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Film, Compass, Video, Loader2 } from "lucide-react";
 import type { CampaignItem } from "@/components/dashboard/types";
+import CampaignProgress from "@/components/dashboard/campaigns/CampaignProgress";
 
 export default function CampaignsView() {
   const router = useRouter();
@@ -160,7 +161,7 @@ export default function CampaignsView() {
                         Fee / Creator
                       </p>
                       <p className="text-xs sm:text-sm font-bold text-emerald-400">
-                        ${c.feePerCreator.toLocaleString()}
+                        ₹{c.feePerCreator.toLocaleString()}
                       </p>
                     </div>
                     <div className="bg-white/3 rounded-lg sm:rounded-xl p-2.5 sm:p-3 border border-white/5">
@@ -168,10 +169,16 @@ export default function CampaignsView() {
                         Max / Post
                       </p>
                       <p className="text-xs sm:text-sm font-bold text-red-400">
-                        ${c.maxEarningPerPostPerCreator.toLocaleString()}
+                        ₹{c.maxEarningPerPostPerCreator.toLocaleString()}
                       </p>
                     </div>
                   </div>
+
+                  <CampaignProgress
+                    value={c.completionPercentage}
+                    compact
+                    className="mb-3 sm:mb-4"
+                  />
 
                   <div className="pt-3 border-t border-white/5 flex items-center justify-between">
                     <div className="flex items-center gap-1.5">

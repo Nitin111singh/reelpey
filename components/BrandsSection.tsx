@@ -6,7 +6,7 @@ import {
   Users,
   BarChart3,
   Rocket,
-  BadgeDollarSign,
+  BadgeIndianRupee,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -68,9 +68,9 @@ const perks = [
     border: "border-orange-500/15",
   },
   {
-    icon: BadgeDollarSign,
+    icon: BadgeIndianRupee,
     title: "Cheaper Than Meta Ads",
-    desc: "Get more views per dollar than any paid social platform — with better brand recall.",
+    desc: "Get more views per rupee than any paid social platform — with better brand recall.",
     color: "text-rose-400",
     bg: "bg-rose-500/10",
     border: "border-rose-500/15",

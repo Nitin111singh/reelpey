@@ -13,6 +13,7 @@ import {
 import CampaignHero from "@/components/dashboard/campaigns/CampaignHero";
 import CampaignMeta from "@/components/dashboard/campaigns/CampaignMeta";
 import CampaignStatsGrid from "@/components/dashboard/campaigns/CampaignStatsGrid";
+import CampaignProgress from "@/components/dashboard/campaigns/CampaignProgress";
 import SubmitVideoModal from "@/components/dashboard/campaigns/SubmitVideoModal";
 import SubmitCTA from "@/components/dashboard/campaigns/SubmitCTA";
 
@@ -26,6 +27,7 @@ interface CampaignDetail {
   maxSubmissionsPerAccount: number;
   feePerCreator: number;
   maxEarningPerPostPerCreator: number;
+  completionPercentage: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -187,6 +189,11 @@ export default function CampaignDetailPage() {
           maxEarningPerPostPerCreator={campaign.maxEarningPerPostPerCreator}
           maxSubmissionsPerAccount={campaign.maxSubmissionsPerAccount}
         />
+
+        {/* Completion progress */}
+        <div className="bg-[#14161F] border border-white/5 rounded-2xl p-4 sm:p-6">
+          <CampaignProgress value={campaign.completionPercentage} />
+        </div>
 
         {/* Description */}
         <div className="bg-[#14161F] border border-white/5 rounded-2xl p-4 sm:p-6 space-y-3">

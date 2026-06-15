@@ -18,7 +18,7 @@ export default function SubmitCTA({
           Ready to participate?
         </h3>
         <p className="text-xs sm:text-sm text-white/40">
-          Submit your video link to earn up to $
+          Submit your video link to earn up to ₹
           {maxEarningPerPostPerCreator.toLocaleString()} per post
         </p>
       </div>

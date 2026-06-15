@@ -17,7 +17,7 @@ import {
   Loader2,
   User as UserIcon,
   Eye,
-  DollarSign,
+  IndianRupee,
 } from "lucide-react";
 
 interface AdminUserDetail {
@@ -188,11 +188,11 @@ export default function AdminUserDetailPage() {
 
             <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-3">
-                <DollarSign className="w-4 h-4 text-emerald-400" />
+                <IndianRupee className="w-4 h-4 text-emerald-400" />
                 <span className="text-sm text-white/50">Money Earned</span>
               </div>
               <p className="text-2xl font-bold text-emerald-400">
-                ${(user.moneyEarned ?? 0).toLocaleString()}
+                ₹{(user.moneyEarned ?? 0).toLocaleString()}
               </p>
             </div>
           </div>

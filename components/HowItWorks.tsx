@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Link2, Upload, DollarSign } from "lucide-react";
+import { Link2, Upload, IndianRupee } from "lucide-react";
 import Link from "next/link";
 
 const steps = [
@@ -20,7 +20,7 @@ const steps = [
     gradient: "from-cosmic-purple to-cosmic-blue",
   },
   {
-    icon: DollarSign,
+    icon: IndianRupee,
     title: "Get Paid",
     description:
       "Earn automatically for every verified view your content generates. Cash out anytime.",

@@ -12,7 +12,7 @@ import {
   XCircle,
   Clock,
   Eye,
-  DollarSign,
+  IndianRupee,
   Pencil,
   Check,
 } from "lucide-react";
@@ -248,7 +248,7 @@ export default function SubmissionsModal({ campaign, onClose }: SubmissionsModal
                             />
                           ) : (
                             <div className="flex items-center justify-end gap-1 text-emerald-400 font-semibold text-xs">
-                              <DollarSign className="w-3 h-3" />
+                              <IndianRupee className="w-3 h-3" />
                               {(s.earnings ?? 0).toLocaleString()}
                             </div>
                           )}

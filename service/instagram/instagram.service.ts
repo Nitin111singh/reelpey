@@ -61,6 +61,30 @@ class InstagramService {
   }
 
   /**
+   * Guard: an Instagram username that is already VERIFIED by another user
+   * cannot be claimed/added/verified by anyone else.
+   * Unverified accounts don't block others — only a verified one locks the handle.
+   *
+   * @param username   normalized Instagram handle
+   * @param userId     the user attempting to claim it (excluded from the check)
+   */
+  private async assertNotClaimedByOther(
+    username: string,
+    userId: string,
+  ): Promise<void> {
+    const claimed = await prisma.connectedAccount.findFirst({
+      where: { username, isVerified: true, userId: { not: userId } },
+      select: { id: true },
+    });
+
+    if (claimed) {
+      throw new ConflictError(
+        "This Instagram account is already registered on Reelpey with another account.",
+      );
+    }
+  }
+
+  /**
    * Extract the Instagram media shortcode from a post/reel URL.
    * Used to validate submission links and to dedupe (the same reel pasted
    * with different query strings / scheme / www|m / trailing slash normalizes
@@ -235,6 +259,9 @@ class InstagramService {
     const username = this.extractUsername(input);
     const accountUrl = this.buildAccountUrl(username);
 
+    // Block if this handle is already verified under a different account
+    await this.assertNotClaimedByOther(username, userId);
+
     const existing = await prisma.connectedAccount.findFirst({
       where: { userId, username },
     });
@@ -309,6 +336,9 @@ class InstagramService {
         400
       );
     }
+
+    // Race guard: someone else may have verified this handle since it was added
+    await this.assertNotClaimedByOther(account.username, userId);
 
     const bio = await this.fetchInstagramBio(account.username);
 
@@ -473,6 +503,11 @@ class InstagramService {
 
     if (account.manualVerificationStatus !== "PENDING") {
       throw new AppError("This request is not in a pending state", 400);
+    }
+
+    // Don't approve a handle that another user has already verified
+    if (action === "APPROVED") {
+      await this.assertNotClaimedByOther(account.username, account.userId);
     }
 
     const updated = await prisma.connectedAccount.update({

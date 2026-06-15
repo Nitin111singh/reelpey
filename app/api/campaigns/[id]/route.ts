@@ -90,6 +90,10 @@ export async function PATCH(
     if (maxEarningPerPostPerCreator !== null)
       rawBody.maxEarningPerPostPerCreator = Number(maxEarningPerPostPerCreator);
 
+    const completionPercentage = formData.get("completionPercentage");
+    if (completionPercentage !== null)
+      rawBody.completionPercentage = Number(completionPercentage);
+
     // ── Validate ─────────────────────────────────────────────────────────────
     const validated = updateCampaignSchema.parse(rawBody);
 

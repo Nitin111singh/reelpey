@@ -74,7 +74,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="flex h-screen bg-[#0B0C10] text-gray-100 overflow-hidden font-sans">
+    <div className="flex h-dvh bg-[#0B0C10] text-gray-100 overflow-hidden font-sans">
       {/* ─── SIDEBAR (desktop) + BOTTOM NAV (mobile) ─── */}
       <DashboardSidebar
         activeTab={activeTab}

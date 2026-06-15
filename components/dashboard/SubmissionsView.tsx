@@ -12,7 +12,7 @@ import {
   XCircle,
   Clock,
   Eye,
-  DollarSign,
+  IndianRupee,
 } from "lucide-react";
 import type { SubmissionItem } from "@/components/dashboard/types";
 
@@ -200,7 +200,7 @@ export default function SubmissionsView() {
                       {/* Earnings */}
                       <td className="px-5 py-4 text-right">
                         <div className="flex items-center justify-end gap-1 text-emerald-400 font-semibold text-sm">
-                          <DollarSign className="w-3.5 h-3.5" />
+                          <IndianRupee className="w-3.5 h-3.5" />
                           {(s.earnings ?? 0).toLocaleString()}
                         </div>
                       </td>
@@ -290,8 +290,8 @@ export default function SubmissionsView() {
                     {(s.views ?? 0).toLocaleString()} views
                   </div>
                   <div className="flex items-center gap-1 text-emerald-400 text-xs font-semibold">
-                    <DollarSign className="w-3 h-3" />
-                    ${(s.earnings ?? 0).toLocaleString()} earned
+                    <IndianRupee className="w-3 h-3" />
+                    ₹{(s.earnings ?? 0).toLocaleString()} earned
                   </div>
                 </div>
 

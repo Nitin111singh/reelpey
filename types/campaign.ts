@@ -50,6 +50,13 @@ export const createCampaignSchema = z.object({
   maxEarningPerPostPerCreator: z
     .number({ message: "Max earning must be a number" })
     .nonnegative("Max earning cannot be negative"),
+
+  completionPercentage: z
+    .number({ message: "Completion percentage must be a number" })
+    .int("Completion percentage must be a whole number")
+    .min(0, "Completion percentage cannot be below 0")
+    .max(100, "Completion percentage cannot exceed 100")
+    .optional(),
 });
 
 export type CreateCampaignInput = z.infer<typeof createCampaignSchema>;
@@ -76,6 +83,7 @@ export interface CampaignResponse {
   maxSubmissionsPerAccount: number;
   feePerCreator: number;
   maxEarningPerPostPerCreator: number;
+  completionPercentage: number;
   status: "ACTIVE" | "COMPLETED";
   createdAt: Date;
   updatedAt: Date;

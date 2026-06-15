@@ -13,7 +13,7 @@ import {
   XCircle,
   Clock,
   Eye,
-  DollarSign,
+  IndianRupee,
   Pencil,
   Check,
   X,
@@ -216,7 +216,7 @@ export default function CampaignSubmissionsPage() {
             { label: "Rejected", value: stats.rejected,                       color: "text-red-400",      bg: "bg-red-500/8",         border: "border-red-500/15" },
             { label: "Pending",  value: stats.pending,                        color: "text-amber-400",    bg: "bg-amber-500/8",       border: "border-amber-500/15" },
             { label: "Views",    value: stats.totalViews.toLocaleString(),    color: "text-cyan-400",     bg: "bg-cyan-500/8",        border: "border-cyan-500/15" },
-            { label: "Earned",   value: `$${stats.totalEarnings.toLocaleString()}`, color: "text-violet-400", bg: "bg-violet-500/8", border: "border-violet-500/15" },
+            { label: "Earned",   value: `₹${stats.totalEarnings.toLocaleString()}`, color: "text-violet-400", bg: "bg-violet-500/8", border: "border-violet-500/15" },
           ].map((card) => (
             <div key={card.label} className={`${card.bg} border ${card.border} rounded-xl p-3 text-center`}>
               <p className="text-xs text-white/40 mb-1">{card.label}</p>
@@ -397,7 +397,7 @@ export default function CampaignSubmissionsPage() {
                               />
                             ) : (
                               <div className="flex items-center justify-end gap-1 text-emerald-400 font-semibold text-xs">
-                                <DollarSign className="w-3 h-3" />
+                                <IndianRupee className="w-3 h-3" />
                                 {(s.earnings ?? 0).toLocaleString()}
                               </div>
                             )}
@@ -464,7 +464,7 @@ export default function CampaignSubmissionsPage() {
                         </td>
                         <td className="px-4 py-3 text-right">
                           <div className="flex items-center justify-end gap-1 text-emerald-400 font-bold text-xs">
-                            <DollarSign className="w-3 h-3" />
+                            <IndianRupee className="w-3 h-3" />
                             {submissions.reduce((a, s) => a + (s.earnings ?? 0), 0).toLocaleString()}
                           </div>
                         </td>

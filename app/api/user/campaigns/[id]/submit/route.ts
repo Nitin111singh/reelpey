@@ -42,13 +42,14 @@ export async function POST(
     // Normalize to the Instagram media shortcode (validated by the schema above)
     const mediaShortcode = instagramService.extractMediaShortcode(videoLink)!;
 
-    // Reject duplicate links (same reel can only be submitted once, globally)
+    // Reject duplicate links for THIS user only — a different user pasting the
+    // same reel earlier must never block the real owner from submitting it.
     const duplicate = await prisma.campaignSubmission.findFirst({
-      where: { mediaShortcode },
+      where: { userId, mediaShortcode },
       select: { id: true },
     });
     if (duplicate) {
-      return errorResponse("This link has already been submitted.", 409);
+      return errorResponse("You have already submitted this link.", 409);
     }
 
     // Check submission limit per user
@@ -75,12 +76,12 @@ export async function POST(
       });
       return successResponse(submission, 201);
     } catch (createError) {
-      // Race-safe fallback: unique constraint on mediaShortcode
+      // Race-safe fallback: composite unique constraint on (userId, mediaShortcode)
       if (
         createError instanceof Prisma.PrismaClientKnownRequestError &&
         createError.code === "P2002"
       ) {
-        return errorResponse("This link has already been submitted.", 409);
+        return errorResponse("You have already submitted this link.", 409);
       }
       throw createError;
     }
