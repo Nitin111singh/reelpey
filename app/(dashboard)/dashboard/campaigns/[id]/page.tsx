@@ -14,6 +14,7 @@ import CampaignHero from "@/components/dashboard/campaigns/CampaignHero";
 import CampaignMeta from "@/components/dashboard/campaigns/CampaignMeta";
 import CampaignStatsGrid from "@/components/dashboard/campaigns/CampaignStatsGrid";
 import CampaignProgress from "@/components/dashboard/campaigns/CampaignProgress";
+import LinkifiedText from "@/components/LinkifiedText";
 import SubmitVideoModal from "@/components/dashboard/campaigns/SubmitVideoModal";
 import SubmitCTA from "@/components/dashboard/campaigns/SubmitCTA";
 
@@ -69,6 +70,16 @@ export default function CampaignDetailPage() {
 
     fetchCampaign();
   }, [id]);
+
+  // Auto-open the submit modal when arriving from a card's "Submit" button (?submit=1)
+  useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("submit") === "1"
+    ) {
+      setIsSubmitOpen(true);
+    }
+  }, []);
 
   function showToast(msg: string, ok: boolean) {
     setToast({ msg, ok });
@@ -149,7 +160,7 @@ export default function CampaignDetailPage() {
       <div className="sticky top-0 z-10 bg-[#0B0C10]/80 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push("/dashboard?tab=campaigns")}
             className="flex items-center gap-1.5 sm:gap-2 text-white/60 hover:text-white transition-colors text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -159,7 +170,7 @@ export default function CampaignDetailPage() {
 
           <button
             onClick={() => setIsSubmitOpen(true)}
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-red-600/20 transition-all hover:scale-[1.02]"
+            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-red-600/20 transition-all duration-100 hover:scale-[1.02] active:scale-95 touch-manipulation select-none"
           >
             <Send className="w-4 h-4" />
             <span className="hidden sm:inline">Submit Video</span>
@@ -200,9 +211,10 @@ export default function CampaignDetailPage() {
           <h2 className="text-sm font-semibold text-white/60 uppercase tracking-wider">
             About this Campaign
           </h2>
-          <p className="text-white/80 leading-relaxed whitespace-pre-wrap text-sm sm:text-base">
-            {campaign.description}
-          </p>
+          <LinkifiedText
+            text={campaign.description}
+            className="text-white/80 leading-relaxed whitespace-pre-wrap text-sm sm:text-base"
+          />
         </div>
 
         <SubmitCTA

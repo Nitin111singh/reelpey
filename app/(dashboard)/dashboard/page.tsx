@@ -14,6 +14,24 @@ export default function DashboardPage() {
   const { user: authUser, login, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>("profile");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
+  // Restore the active tab from the URL on mount so returning from a campaign
+  // detail page (or a refresh / shared link) lands on the right tab.
+  useEffect(() => {
+    const tab = new URLSearchParams(window.location.search).get("tab");
+    if (tab === "campaigns" || tab === "submissions" || tab === "profile") {
+      setActiveTab(tab);
+    }
+  }, []);
+
+  // Switch tab and reflect it in the URL (without adding history noise) so the
+  // browser/back button and refreshes preserve the current tab.
+  const changeTab = useCallback((tab: Tab) => {
+    setActiveTab(tab);
+    const url = tab === "profile" ? "/dashboard" : `/dashboard?tab=${tab}`;
+    window.history.replaceState(null, "", url);
+  }, []);
+
   const [isAddInstagramOpen, setIsAddInstagramOpen] = useState(false);
   const [connectedAccounts, setConnectedAccounts] = useState<ConnectedAccount[]>([]);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState(true);
@@ -78,7 +96,7 @@ export default function DashboardPage() {
       {/* ─── SIDEBAR (desktop) + BOTTOM NAV (mobile) ─── */}
       <DashboardSidebar
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={changeTab}
         onLogout={() => setIsLogoutModalOpen(true)}
       />
 

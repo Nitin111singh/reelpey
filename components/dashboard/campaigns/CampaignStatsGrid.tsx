@@ -26,7 +26,7 @@ export default function CampaignStatsGrid({
       />
       <StatCard
         icon={Users}
-        label="Fee / Creator"
+        label="Fee Per 1M Views"
         value={`₹${feePerCreator.toLocaleString()}`}
         color="text-violet-400"
         bg="bg-violet-500/10"

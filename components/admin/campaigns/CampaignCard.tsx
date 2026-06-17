@@ -113,7 +113,7 @@ export default function CampaignCard({
           />
           <StatChip
             icon={TrendingUp}
-            label="Fee / Creator"
+            label="Fee Per 1M Views"
             value={`₹${c.feePerCreator.toLocaleString()}`}
             color="text-violet-400"
           />

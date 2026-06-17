@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Film, Compass, Video, Loader2 } from "lucide-react";
+import { Film, Compass, Video, Loader2, Send } from "lucide-react";
 import type { CampaignItem } from "@/components/dashboard/types";
 import CampaignProgress from "@/components/dashboard/campaigns/CampaignProgress";
 
@@ -158,7 +158,7 @@ export default function CampaignsView() {
                   <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4 mt-auto">
                     <div className="bg-white/3 rounded-lg sm:rounded-xl p-2.5 sm:p-3 border border-white/5">
                       <p className="text-[10px] text-white/40 uppercase tracking-wider mb-1">
-                        Fee / Creator
+                        Fee Per 1M Views
                       </p>
                       <p className="text-xs sm:text-sm font-bold text-emerald-400">
                         ₹{c.feePerCreator.toLocaleString()}
@@ -180,16 +180,34 @@ export default function CampaignsView() {
                     className="mb-3 sm:mb-4"
                   />
 
-                  <div className="pt-3 border-t border-white/5 flex items-center justify-between">
+                  <div className="pt-3 border-t border-white/5 space-y-2.5">
                     <div className="flex items-center gap-1.5">
                       <Video className="w-3.5 h-3.5 text-white/30" />
                       <span className="text-xs text-white/40">
-                        {c.maxSubmissionsPerAccount} max
+                        {c.maxSubmissionsPerAccount} max submissions
                       </span>
                     </div>
-                    <span className="text-xs font-semibold text-red-400 group-hover:text-red-300 transition-colors">
-                      View Details →
-                    </span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/dashboard/campaigns/${c.id}`);
+                        }}
+                        className="flex items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 active:bg-white/20 text-white/70 hover:text-white text-xs font-semibold px-3 py-2 transition-all duration-100 active:scale-95 touch-manipulation select-none"
+                      >
+                        View Details
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/dashboard/campaigns/${c.id}?submit=1`);
+                        }}
+                        className="flex items-center justify-center gap-1.5 rounded-lg bg-red-600 hover:bg-red-700 active:bg-red-800 text-white text-xs font-semibold px-3 py-2 transition-all duration-100 active:scale-95 touch-manipulation select-none shadow-sm shadow-red-600/20"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        Submit
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
