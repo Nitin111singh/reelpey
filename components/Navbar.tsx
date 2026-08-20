@@ -4,6 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import DiscordIcon from "@/components/icons/DiscordIcon";
+import InstagramIcon from "@/components/icons/InstagramIcon";
+import { CONTACT_EMAIL, CONTACT_LINKS } from "@/config/contact";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -39,7 +42,9 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Links */}
-        <div className="hidden items-center gap-8 md:flex">
+        {/* Desktop nav switches in at lg, not md — with the platform icons the
+            full row no longer fits a 768px tablet, which gets the mobile menu. */}
+        <div className="hidden items-center gap-8 lg:flex">
           <Link href="#campaigns" className="text-sm font-medium text-white/60 transition-colors hover:text-white">
             Campaigns
           </Link>
@@ -49,10 +54,41 @@ export default function Navbar() {
           <Link href="#" className="text-sm font-medium text-white/60 transition-colors hover:text-white">
             Creators
           </Link>
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="text-sm font-medium text-white/60 transition-colors hover:text-white"
+          >
+            Contact
+          </a>
+
+          {/* Platform links — mirrors what the mobile menu offers */}
+          <span className="h-4 w-px bg-white/10" aria-hidden="true" />
+          <div className="flex items-center gap-2">
+            <a
+              href={CONTACT_LINKS.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Reelpey on Instagram"
+              title="Instagram"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/60 transition-all hover:border-cosmic-pink/40 hover:text-cosmic-pink"
+            >
+              <InstagramIcon className="h-4 w-4" />
+            </a>
+            <a
+              href={CONTACT_LINKS.discord}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Reelpey on Discord"
+              title="Discord"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/60 transition-all hover:border-cosmic-blue/40 hover:text-cosmic-blue"
+            >
+              <DiscordIcon className="h-4 w-4" />
+            </a>
+          </div>
         </div>
 
         {/* Desktop CTAs */}
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-3 lg:flex">
           <a
             href="#campaign-request"
             className="rounded-full border border-white/10 px-5 py-2.5 text-sm font-medium text-white/80 transition-all hover:border-cosmic-violet/50 hover:text-white hover:shadow-lg hover:shadow-cosmic-violet/10"
@@ -70,7 +106,7 @@ export default function Navbar() {
         {/* Mobile Toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="text-white/80 md:hidden"
+          className="text-white/80 lg:hidden"
           aria-label="Toggle menu"
         >
           {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -79,7 +115,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="glass mt-2 mx-4 rounded-2xl p-6 md:hidden animate-fade-in-up">
+        <div className="glass mt-2 mx-4 rounded-2xl p-6 lg:hidden animate-fade-in-up">
           <div className="flex flex-col gap-4">
             <a href="#campaigns" className="text-sm font-medium text-white/70 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>
               Campaigns
@@ -105,6 +141,37 @@ export default function Navbar() {
             >
               Join as Creator
             </Link>
+
+            <hr className="border-white/10" />
+            <div className="flex items-center gap-3">
+              <a
+                href={CONTACT_LINKS.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Reelpey on Instagram"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/60 transition-all hover:border-cosmic-pink/40 hover:text-cosmic-pink"
+                onClick={() => setMobileOpen(false)}
+              >
+                <InstagramIcon className="h-[18px] w-[18px]" />
+              </a>
+              <a
+                href={CONTACT_LINKS.discord}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Reelpey on Discord"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/60 transition-all hover:border-cosmic-blue/40 hover:text-cosmic-blue"
+                onClick={() => setMobileOpen(false)}
+              >
+                <DiscordIcon className="h-[18px] w-[18px]" />
+              </a>
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="text-sm font-medium text-white/60 transition-colors hover:text-white"
+                onClick={() => setMobileOpen(false)}
+              >
+                Contact Us
+              </a>
+            </div>
           </div>
         </div>
       )}

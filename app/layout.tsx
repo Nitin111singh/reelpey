@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import ContactWidget from "@/components/ContactWidget";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -45,7 +46,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} antialiased`}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {children}
+          <ContactWidget />
+        </AuthProvider>
       </body>
     </html>
   );
