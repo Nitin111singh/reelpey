@@ -1,5 +1,23 @@
 import Link from "next/link";
 import Image from "next/image";
+import DiscordIcon from "@/components/icons/DiscordIcon";
+import InstagramIcon from "@/components/icons/InstagramIcon";
+import { CONTACT_EMAIL, CONTACT_LINKS } from "@/config/contact";
+
+const socials = [
+  {
+    label: "Instagram",
+    href: CONTACT_LINKS.instagram,
+    icon: InstagramIcon,
+    hover: "hover:text-cosmic-pink hover:border-cosmic-pink/40",
+  },
+  {
+    label: "Discord",
+    href: CONTACT_LINKS.discord,
+    icon: DiscordIcon,
+    hover: "hover:text-cosmic-blue hover:border-cosmic-blue/40",
+  },
+];
 
 const footerLinks = {
   Legal: [
@@ -10,13 +28,13 @@ const footerLinks = {
     { label: "Do Not Sell", href: "#" },
   ],
   Company: [
-    { label: "Contact Us", href: "#" },
-    { label: "Support", href: "#" },
+    { label: "Contact Us", href: `mailto:${CONTACT_EMAIL}` },
+    { label: "Support", href: CONTACT_LINKS.discord },
     { label: "Jobs", href: "#" },
   ],
   Resources: [
     { label: "Campaign Rules", href: "#" },
-    { label: "Creator Community", href: "#" },
+    { label: "Creator Community", href: CONTACT_LINKS.discord },
     { label: "Blog", href: "#" },
   ],
 };
@@ -56,6 +74,29 @@ export default function Footer() {
                 Join as Creator
               </Link>
             </div>
+
+            {/* Social / community */}
+            <div className="mt-6 flex items-center gap-3">
+              {socials.map(({ label, href, icon: Icon, hover }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Reelpey on ${label}`}
+                  title={label}
+                  className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/40 transition-all ${hover}`}
+                >
+                  <Icon className="h-[18px] w-[18px]" />
+                </a>
+              ))}
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="text-xs text-white/30 transition-colors hover:text-white/60"
+              >
+                {CONTACT_EMAIL}
+              </a>
+            </div>
           </div>
 
           {/* Link Columns */}
@@ -69,6 +110,12 @@ export default function Footer() {
                   <li key={link.label}>
                     <a
                       href={link.href}
+                      target={link.href.startsWith("http") ? "_blank" : undefined}
+                      rel={
+                        link.href.startsWith("http")
+                          ? "noopener noreferrer"
+                          : undefined
+                      }
                       className="text-sm text-white/30 transition-colors hover:text-white/60"
                     >
                       {link.label}
